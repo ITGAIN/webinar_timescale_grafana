@@ -7,31 +7,6 @@ services:
     environment:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
-#    entrypoint:
-#      - sh
-#      - -euc
-#      - |
-#        mkdir -p /etc/grafana/provisioning/datasources
-#        cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
-#        apiVersion: 1
-#        datasources:
-#          - name: timescale
-#            type: postgres
-#            uid: ds-timescale-db
-#            access: proxy
-#            url: timescale:5432
-#            user: grafanareader
-#            database: postgres
-#            secureJsonData:
-#              password: itgain
-#            jsonData:
-#              postgresVersion: 1700
-#              sslmode: "disable"
-#              maxOpenConns: 75
-#            editable: false
-#            version: 4
-#        EOF
-#        /run.sh
     ports:
       - "3000:3000"
 
