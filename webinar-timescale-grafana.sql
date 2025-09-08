@@ -1,6 +1,8 @@
 
 CREATE USER grafanareader WITH PASSWORD 'itgain';
 
+select * from pg_stat_database;
+
 create schema observability;
 
 create table observability.hist_pg_stat_database as select current_timestamp as time,* from pg_stat_database;
@@ -24,4 +26,16 @@ SELECT add_retention_policy('observability.hist_pg_stat_database', INTERVAL '7d'
 while true; do docker compose exec -t s4dbs_postgres psql -U postgres -d postgres -c "insert into observability.hist_pg_stat_database select current_timestamp as time,* from pg_stat_database;"; sleep 60;done
 */
 
-select * from observability.hist_pg_stat_database
+select * from observability.hist_pg_stat_database;
+
+insert into observability.hist_pg_stat_database select current_timestamp as time,* from pg_stat_database
+
+drop table observability.hist_pg_stat_database;
+
+drop schema observability;
+
+drop user grafanareader;
+
+select * from pg_stat_database;
+
+ALTER ROLE grafanareader SET search_path = 'observability';

@@ -1,4 +1,46 @@
 -- webinar grafana dashboard sql
+-- webinar tabellen sql
+-- anzahl der aktiven sessions (gauge)
+SELECT
+    $__timeGroupAlias("time",$__interval),
+    avg(numbackends) AS "numbackends"
+    FROM observability.hist_pg_stat_database
+    WHERE
+    $__timeFilter("time")
+    GROUP BY 1
+    ORDER BY 1
+
+-- anzahl der transaktionen (counter)
+SELECT
+    $__timeGroupAlias("time",$__interval),
+    (CASE WHEN avg(xact_commit) >= lag(avg(xact_commit)) OVER (ORDER BY $__timeGroup("time",$__interval)) THEN avg(xact_commit) - lag(avg(xact_commit)) OVER (ORDER BY $__timeGroup("time",$__interval)) WHEN lag(avg(xact_commit)) OVER (ORDER BY $__timeGroup("time",$__interval)) IS NULL THEN NULL ELSE avg(xact_commit) END) AS "xact_commit"
+    FROM observability.hist_pg_stat_database
+    WHERE
+    $__timeFilter("time")
+    GROUP BY 1
+    ORDER BY 1
+
+-- anzahl blocks hit (counter)
+SELECT
+    $__timeGroupAlias("time",$__interval),
+    (CASE WHEN avg(blks_hit) >= lag(avg(blks_hit)) OVER (ORDER BY $__timeGroup("time",$__interval)) THEN avg(blks_hit) - lag(avg(blks_hit)) OVER (ORDER BY $__timeGroup("time",$__interval)) WHEN lag(avg(blks_hit)) OVER (ORDER BY $__timeGroup("time",$__interval)) IS NULL THEN NULL ELSE avg(blks_hit) END) AS "blks_hit"
+    FROM observability.hist_pg_stat_database
+    WHERE
+    $__timeFilter("time")
+    GROUP BY 1
+    ORDER BY 1
+
+-- anzahl blocks read (counter)
+SELECT
+    $__timeGroupAlias("time",$__interval),
+    (CASE WHEN avg(blks_read) >= lag(avg(blks_read)) OVER (ORDER BY $__timeGroup("time",$__interval)) THEN avg(blks_read) - lag(avg(blks_read)) OVER (ORDER BY $__timeGroup("time",$__interval)) WHEN lag(avg(blks_read)) OVER (ORDER BY $__timeGroup("time",$__interval)) IS NULL THEN NULL ELSE avg(blks_read) END) AS "blks_read"
+    FROM observability.hist_pg_stat_database
+    WHERE
+    $__timeFilter("time")
+    GROUP BY 1
+    ORDER BY 1
+
+-- ausblick (speedgain tabellen)
 -- CPU Utilization
 SELECT
     $__timeGroupAlias(snapshot_time,$__interval),
